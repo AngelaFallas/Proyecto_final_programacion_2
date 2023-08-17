@@ -35,3 +35,11 @@ Estados Unidos): registros de terremotos con magnitud mayor a 5.5 desde
 | Tipo        | Caracter | Causa del movimiento         |
 | Profundidad | Numérica | Profundidad del terremoto    |
 | ID          | Caracter | Identificador del movimiento |
+
+### Dataset terremotos_magnitud
+
+| Variable         | Tipo     | Descripción                      |
+|------------------|----------|----------------------------------|
+| ID               | caracter | Identificador del movimiento     |
+| Magnitud         | numérica | Magnitud del terremoto           |
+| Tipo de magnitud | caracter | Unidad de medida de la magnitud. |
