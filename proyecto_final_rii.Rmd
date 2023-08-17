@@ -52,5 +52,21 @@ terremotos_profundidad <- terremotos_profundidad |>
         Error_profundidad = `Depth Error`)
 ```
 
+2.3 Eliminación de filas duplicadas
+
+
+```{r}
+terremotos_magnitud <- terremotos_magnitud |> 
+  distinct()
+```
+
+
+```{r}
+terremotos_profundidad <- terremotos_profundidad |> 
+  distinct()
+```
+```
+
+
 
 
