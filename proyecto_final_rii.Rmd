@@ -65,8 +65,14 @@ terremotos_magnitud <- terremotos_magnitud |>
 terremotos_profundidad <- terremotos_profundidad |> 
   distinct()
 ```
-```
 
+2.4 Transformación de tipos de variables 
+
+```{r}
+terremotos_profundidad <- terremotos_profundidad |> 
+  mutate(Fecha = mdy(Fecha))
+``` 
+2.5
 
 
 
