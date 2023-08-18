@@ -1,6 +1,6 @@
 ---
 title: "practica_final_rii"
-author: "Juliana Cruz Gonzales"
+author: "Juliana Cruz"
 date: "2023-08-17"
 output: html_document
 ---
