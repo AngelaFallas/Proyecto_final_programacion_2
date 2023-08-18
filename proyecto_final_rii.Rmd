@@ -25,6 +25,7 @@ library(hms)
 library(ggplot2)
 library(plotly)
 library(gt)
+library(leaflet)
 ```
 
 # Preparación y limpieza de Datos:
@@ -183,6 +184,8 @@ una tabla de gt que muestre el mes, año, latitud, longitud, magnitud y
 profundidad del terremoto. A esta tabla añada título, subtítulo, y al
 menos un pie de tabla (10pts)
 
+
+
 ```{r}
 terremotos_costa_rica_10_magnitudes <- datos_terremotos |>
    filter(Latitud >= 8, Latitud <= 11, 
@@ -190,7 +193,7 @@ terremotos_costa_rica_10_magnitudes <- datos_terremotos |>
           Tipo == "Earthquake") |>
   arrange(desc(Magnitud)) |>
   head(10)|>
-  group_by(Mes, Anio, Latitud, Longitud, Magnitud, Profundidad)
+  select(-Fecha, -Hora, -Tipo_magnitud, -ID)
 ```
 
 
@@ -210,3 +213,23 @@ terremotos_costa_rica_gt
 
 3.5 Muestre los 10 terremotos con mayor magnitud obtenidos anteriormente
 en un mapa de leaflet. Como popup coloque el año del terremoto. (10pts)
+
+```{r}
+mapa_terremotos_costa_rica <- terremotos_costa_rica_10_magnitudes 
+
+mapa_terremotos_costa_rica <- leaflet() |> 
+  addTiles() |> 
+  addMarkers(lng = -83.073, lat = 9.685, popup = "1991") |> 
+  addMarkers(lng = -84.808, lat = 9.919, popup = "1990") |> 
+  addMarkers(lng = -83.123, lat = 8.717, popup = "1983") |> 
+  addMarkers(lng = -84.159, lat = 9.044, popup = "1999") |> 
+  addMarkers(lng = -84.323, lat = 10.210, popup = "1992") |> 
+  addMarkers(lng = -84.759, lat = 10.679, popup = "1973") |> 
+  addMarkers(lng = -82.943, lat = 8.316, popup = "1979") |> 
+  addMarkers(lng = -83.688, lat = 9.652, popup = "1983") |> 
+  addMarkers(lng = -82.824, lat = 8.416, popup = "2003") |>
+  addMarkers(lng = -83.483, lat = 8.951, popup = "1979")
+
+mapa_terremotos_costa_rica
+```
+
