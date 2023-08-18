@@ -24,6 +24,7 @@ library(lubridate)
 library(hms)
 library(ggplot2)
 library(plotly)
+library(gt)
 ```
 
 # Preparación y limpieza de Datos:
@@ -132,8 +133,10 @@ histograma_magnitud <- ggplot(data = datos_terremotos) +
 ```{r}
 ggplotly (histograma_magnitud)
 ```
-Las magnitudes más frecuentes son las que poseen menor energia liberada con 5.5 y las menos frecuentes con la energia liberada con magnitudes mayores como 7.9
 
+Las magnitudes más frecuentes son las que poseen menor energia liberada
+con 5.5 y las menos frecuentes con la energia liberada con magnitudes
+mayores como 7.9
 
 3.2 Haga un pequeño análisis sobre variación para la variable Tipo.
 Puede usar ggplot2 o plotly, así como lo aprendido en el cuatrimestre
@@ -152,16 +155,19 @@ boxplot_tipo_magnitud <- datos_terremotos |>
 print(boxplot_tipo_magnitud)
 ```
 
-Los datos se ven bastante asimétricos en todas las categorías ya que los percentiles están repartidos asimetricamente respecto a la mediana, no obstante, no son poco dispersos respecto a la media aritmética de magnitud, a pesar de que el evento tipo Earthquake presenta bastantes valores atipicos.  
+Los datos se ven bastante asimétricos en todas las categorías ya que los
+percentiles están repartidos asimetricamente respecto a la mediana, no
+obstante, no son poco dispersos respecto a la media aritmética de
+magnitud, a pesar de que el evento tipo Earthquake presenta bastantes
+valores atipicos.
 
-Adicional, la categoría más frecuente por tipo de de evento y con mayor magnitud de liberacion de energía es el tipo explosión. 
-
+Adicional, la categoría más frecuente por tipo de de evento y con mayor
+magnitud de liberacion de energía es el tipo explosión.
 
 3.3 Filtre los datos de los terremotos para obtener solamente aquellos
 que se hayan dado entre las coordenadas de latitud 8 y 11 Norte con
 Longitud entre -85 y -82 Oeste. Estos son los movimiento telúricos que
 se dieron en Costa Rica. Cuántos fueron? (3pts)
-
 
 ```{r}
 terremotos_costa_rica <- datos_terremotos |> 
@@ -176,6 +182,31 @@ terremotos con magnitud más altas en Costa Rica. Muestre estos datos en
 una tabla de gt que muestre el mes, año, latitud, longitud, magnitud y
 profundidad del terremoto. A esta tabla añada título, subtítulo, y al
 menos un pie de tabla (10pts)
+
+```{r}
+terremotos_costa_rica_10_magnitudes <- datos_terremotos |>
+   filter(Latitud >= 8, Latitud <= 11, 
+          Longitud >= -85, Longitud <= -82, 
+          Tipo == "Earthquake") |>
+  arrange(desc(Magnitud)) |>
+  head(10)|>
+  group_by(Mes, Anio, Latitud, Longitud, Magnitud, Profundidad)
+```
+
+
+```{r}
+terremotos_costa_rica_gt <- terremotos_costa_rica_10_magnitudes |> 
+  gt() |>
+tab_header(
+    title = "Terremotos en Costa Rica",
+    subtitle = "Se presentan los 10 más grandes"
+    ) |>
+     tab_source_note(
+    source_note = "El top 10 refiere a los los movimientos tel´ricos con mayores magnitudes"
+  )
+
+terremotos_costa_rica_gt
+```
 
 3.5 Muestre los 10 terremotos con mayor magnitud obtenidos anteriormente
 en un mapa de leaflet. Como popup coloque el año del terremoto. (10pts)
