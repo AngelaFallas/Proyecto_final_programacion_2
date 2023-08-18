@@ -3,6 +3,9 @@ title: "practica_final_rii"
 author: "Juliana Cruz"
 date: "2023-08-17"
 output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
@@ -11,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 knitr::opts_chunk$set(echo = TRUE)
+library(stringr)
 library(dplyr)
 library(readr)
 library(readxl)
@@ -18,19 +22,21 @@ library(tidyr)# doma de datos
 library(janitor) #limpieza de datos
 library(lubridate)
 library(hms)
+library(ggplot2)
+library(plotly)
 ```
 
 # Preparación y limpieza de Datos:
 
-2.1 Lectura de datos en R 
+2.1 Lectura de datos en R
 
 ```{r include=FALSE}
 terremotos_profundidad <- read_csv("https://raw.githubusercontent.com/isa229/programacion_analisis_datos_ii/main/terremotos_profundidad.csv")
 terremotos_magnitud <- read_csv("https://raw.githubusercontent.com/isa229/programacion_analisis_datos_ii/main/terremotos_magnitud.csv")
 ```
-2.2 Traducción de variables al español
-_
-2.2.1 Renombrar variables de terremotos_maginitud
+
+2.2 Traducción de variables al español \_ 2.2.1 Renombrar variables de
+terremotos_maginitud
 
 ```{r}
 terremotos_magnitud <- terremotos_magnitud |> 
@@ -54,19 +60,17 @@ terremotos_profundidad <- terremotos_profundidad |>
 
 2.3 Eliminación de filas duplicadas
 
-
 ```{r}
 terremotos_magnitud <- terremotos_magnitud |> 
   distinct()
 ```
-
 
 ```{r}
 terremotos_profundidad <- terremotos_profundidad |> 
   distinct()
 ```
 
-2.4 Transformación de tipos de variables 
+2.4 Transformación de tipos de variables
 
 ```{r}
 terremotos_profundidad <- terremotos_profundidad |> 
@@ -112,4 +116,39 @@ datos_terremotos <- subset(datos_terremotos, select = -...1.x)
 datos_terremotos <- subset(datos_terremotos, select = -...1.y)
 ```
 
+3.1 Hacer un pequeño análisis sobre variación para la variable magnitud.
+Puede usar ggplot2 o plolty, así como lo aprendido en el cuatrimestre
+pasado (8pts)
 
+```{r}
+histograma_magnitud <- ggplot(data = datos_terremotos) +
+  geom_histogram(mapping = aes(x = Magnitud), binwidth = 0.1, fill = "#1E8A98") +
+  xlab("Magnitud") +
+  ylab("Frecuencia") +
+  labs(title = "Variación de la Magnitud") +
+  theme_classic()
+```
+
+```{r}
+ggplotly (histograma_magnitud)
+```
+Las magnitudes más frecuentes son las que poseen menor energia liberada con 5.5 y las menos frecuentes con la energia liberada con magnitudes mayores como 7.9
+
+
+3.2 Haga un pequeño análisis sobre variación para la variable Tipo.
+Puede usar ggplot2 o plotly, así como lo aprendido en el cuatrimestre
+pasado. (8pts)
+
+3.3 Filtre los datos de los terremotos para obtener solamente aquellos
+que se hayan dado entre las coordenadas de latitud 8 y 11 Norte con
+Longitud entre -85 y -82 Oeste. Estos son los movimiento telúricos que
+se dieron en Costa Rica. Cuántos fueron? (3pts)
+
+3.4 Filtre los datos de terremotos de Costa Rica para obtener los 10
+terremotos con magnitud más altas en Costa Rica. Muestre estos datos en
+una tabla de gt que muestre el mes, año, latitud, longitud, magnitud y
+profundidad del terremoto. A esta tabla añada título, subtítulo, y al
+menos un pie de tabla (10pts)
+
+3.5 Muestre los 10 terremotos con mayor magnitud obtenidos anteriormente
+en un mapa de leaflet. Como popup coloque el año del terremoto. (10pts)
