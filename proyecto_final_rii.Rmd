@@ -24,7 +24,7 @@ library(hms)
 
 2.1 Lectura de datos en R 
 
-```{r}
+```{r include=FALSE}
 terremotos_profundidad <- read_csv("https://raw.githubusercontent.com/isa229/programacion_analisis_datos_ii/main/terremotos_profundidad.csv")
 terremotos_magnitud <- read_csv("https://raw.githubusercontent.com/isa229/programacion_analisis_datos_ii/main/terremotos_magnitud.csv")
 ```
@@ -73,5 +73,43 @@ terremotos_profundidad <- terremotos_profundidad |>
   mutate(Fecha = mdy(Fecha))
 ```
 
+2.5. Transformación de datos
+
+```{r}
+dup_terremotos_profundidad  <- terremotos_profundidad |>  
+  select(Tipo) |> 
+  distinct()
+
+terremotos_profundidad <- terremotos_profundidad |> 
+  mutate(Tipo = str_to_title(Tipo))
+
+```
+
+2.6. Creación de columnas adicionales
+
+```{r}
+terremotos_profundidad <- terremotos_profundidad |> 
+  mutate(Mes = format(Fecha, "%B"))
+
+terremotos_profundidad <- terremotos_profundidad |> 
+  mutate(Anio = format(Fecha, "%Y"))
+```
+
+2.7. Unir conjunto de datos
+
+```{r}
+datos_terremotos <- left_join(terremotos_magnitud, terremotos_profundidad, by = "ID")
+```
+
+2.8. Eliminar columnas vacías
+
+```{r}
+datos_terremotos <- datos_terremotos |> 
+  remove_empty(which = c("rows", "cols"))
+
+datos_terremotos <- subset(datos_terremotos, select = -...1.x)
+
+datos_terremotos <- subset(datos_terremotos, select = -...1.y)
+```
 
 
