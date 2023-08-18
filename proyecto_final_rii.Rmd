@@ -3,6 +3,9 @@ title: "practica_final_rii"
 author: "Juliana Cruz"
 date: "2023-08-17"
 output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
@@ -11,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 knitr::opts_chunk$set(echo = TRUE)
+library(stringr)
 library(dplyr)
 library(readr)
 library(readxl)
@@ -18,19 +22,23 @@ library(tidyr)# doma de datos
 library(janitor) #limpieza de datos
 library(lubridate)
 library(hms)
+library(ggplot2)
+library(plotly)
+library(gt)
+library(leaflet)
 ```
 
 # Preparación y limpieza de Datos:
 
-2.1 Lectura de datos en R 
+2.1 Lectura de datos en R
 
 ```{r include=FALSE}
 terremotos_profundidad <- read_csv("https://raw.githubusercontent.com/isa229/programacion_analisis_datos_ii/main/terremotos_profundidad.csv")
 terremotos_magnitud <- read_csv("https://raw.githubusercontent.com/isa229/programacion_analisis_datos_ii/main/terremotos_magnitud.csv")
 ```
-2.2 Traducción de variables al español
-_
-2.2.1 Renombrar variables de terremotos_maginitud
+
+2.2 Traducción de variables al español \_ 2.2.1 Renombrar variables de
+terremotos_maginitud
 
 ```{r}
 terremotos_magnitud <- terremotos_magnitud |> 
@@ -54,19 +62,17 @@ terremotos_profundidad <- terremotos_profundidad |>
 
 2.3 Eliminación de filas duplicadas
 
-
 ```{r}
 terremotos_magnitud <- terremotos_magnitud |> 
   distinct()
 ```
-
 
 ```{r}
 terremotos_profundidad <- terremotos_profundidad |> 
   distinct()
 ```
 
-2.4 Transformación de tipos de variables 
+2.4 Transformación de tipos de variables
 
 ```{r}
 terremotos_profundidad <- terremotos_profundidad |> 
@@ -112,4 +118,118 @@ datos_terremotos <- subset(datos_terremotos, select = -...1.x)
 datos_terremotos <- subset(datos_terremotos, select = -...1.y)
 ```
 
+3.1 Hacer un pequeño análisis sobre variación para la variable magnitud.
+Puede usar ggplot2 o plolty, así como lo aprendido en el cuatrimestre
+pasado (8pts)
+
+```{r}
+histograma_magnitud <- ggplot(data = datos_terremotos) +
+  geom_histogram(mapping = aes(x = Magnitud), binwidth = 0.1, fill = "#1E8A98") +
+  xlab("Magnitud") +
+  ylab("Frecuencia") +
+  labs(title = "Variación de la Magnitud") +
+  theme_classic()
+```
+
+```{r}
+ggplotly (histograma_magnitud)
+```
+
+Las magnitudes más frecuentes son las que poseen menor energia liberada
+con 5.5 y las menos frecuentes con la energia liberada con magnitudes
+mayores como 7.9
+
+3.2 Haga un pequeño análisis sobre variación para la variable Tipo.
+Puede usar ggplot2 o plotly, así como lo aprendido en el cuatrimestre
+pasado. (8pts)
+
+```{r}
+boxplot_tipo_magnitud <- datos_terremotos |>
+  ggplot(mapping = aes(x = Magnitud, y = Tipo)) +
+  geom_boxplot(color = "#4682B4", fill = "#FFA500") +
+  labs(
+    title = "Covariación entre Magnitud y Tipo"
+  ) + 
+  theme(axis.title = element_text(size = 14, face = "bold"))+
+  theme_classic()
+
+print(boxplot_tipo_magnitud)
+```
+
+Los datos se ven bastante asimétricos en todas las categorías ya que los
+percentiles están repartidos asimetricamente respecto a la mediana, no
+obstante, no son poco dispersos respecto a la media aritmética de
+magnitud, a pesar de que el evento tipo Earthquake presenta bastantes
+valores atipicos.
+
+Adicional, la categoría más frecuente por tipo de de evento y con mayor
+magnitud de liberacion de energía es el tipo explosión.
+
+3.3 Filtre los datos de los terremotos para obtener solamente aquellos
+que se hayan dado entre las coordenadas de latitud 8 y 11 Norte con
+Longitud entre -85 y -82 Oeste. Estos son los movimiento telúricos que
+se dieron en Costa Rica. Cuántos fueron? (3pts)
+
+```{r}
+terremotos_costa_rica <- datos_terremotos |> 
+  filter(Latitud >= 8, Latitud <= 11, Longitud >= -85, Longitud <= -82) |>
+  count()
+```
+
+Se dieron 65 movimientos telúricos en Costa Rica.
+
+3.4 Filtre los datos de terremotos de Costa Rica para obtener los 10
+terremotos con magnitud más altas en Costa Rica. Muestre estos datos en
+una tabla de gt que muestre el mes, año, latitud, longitud, magnitud y
+profundidad del terremoto. A esta tabla añada título, subtítulo, y al
+menos un pie de tabla (10pts)
+
+
+
+```{r}
+terremotos_costa_rica_10_magnitudes <- datos_terremotos |>
+   filter(Latitud >= 8, Latitud <= 11, 
+          Longitud >= -85, Longitud <= -82, 
+          Tipo == "Earthquake") |>
+  arrange(desc(Magnitud)) |>
+  head(10)|>
+  select(-Fecha, -Hora, -Tipo_magnitud, -ID)
+```
+
+
+```{r}
+terremotos_costa_rica_gt <- terremotos_costa_rica_10_magnitudes |> 
+  gt() |>
+tab_header(
+    title = "Terremotos en Costa Rica",
+    subtitle = "Se presentan los 10 más grandes"
+    ) |>
+     tab_source_note(
+    source_note = "El top 10 refiere a los los movimientos tel´ricos con mayores magnitudes"
+  )
+
+terremotos_costa_rica_gt
+```
+
+3.5 Muestre los 10 terremotos con mayor magnitud obtenidos anteriormente
+en un mapa de leaflet. Como popup coloque el año del terremoto. (10pts)
+
+```{r}
+mapa_terremotos_costa_rica <- terremotos_costa_rica_10_magnitudes 
+
+mapa_terremotos_costa_rica <- leaflet() |> 
+  addTiles() |> 
+  addMarkers(lng = -83.073, lat = 9.685, popup = "1991") |> 
+  addMarkers(lng = -84.808, lat = 9.919, popup = "1990") |> 
+  addMarkers(lng = -83.123, lat = 8.717, popup = "1983") |> 
+  addMarkers(lng = -84.159, lat = 9.044, popup = "1999") |> 
+  addMarkers(lng = -84.323, lat = 10.210, popup = "1992") |> 
+  addMarkers(lng = -84.759, lat = 10.679, popup = "1973") |> 
+  addMarkers(lng = -82.943, lat = 8.316, popup = "1979") |> 
+  addMarkers(lng = -83.688, lat = 9.652, popup = "1983") |> 
+  addMarkers(lng = -82.824, lat = 8.416, popup = "2003") |>
+  addMarkers(lng = -83.483, lat = 8.951, popup = "1979")
+
+mapa_terremotos_costa_rica
+```
 
