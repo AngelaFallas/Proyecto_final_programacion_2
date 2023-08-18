@@ -139,6 +139,23 @@ Las magnitudes más frecuentes son las que poseen menor energia liberada con 5.5
 Puede usar ggplot2 o plotly, así como lo aprendido en el cuatrimestre
 pasado. (8pts)
 
+```{r}
+boxplot_tipo_magnitud <- datos_terremotos |>
+  ggplot(mapping = aes(x = Magnitud, y = Tipo)) +
+  geom_boxplot(color = "#4682B4", fill = "#FFA500") +
+  labs(
+    title = "Covariación entre Magnitud y Tipo"
+  ) + 
+  theme(axis.title = element_text(size = 14, face = "bold"))
+
+print(boxplot_tipo_magnitud)
+```
+
+Los datos se ven bastante asimétricos en todas las categorías ya que los percentiles están repartidos asimetricamente respecto a la mediana, no obstante, no son poco dispersos respecto a la media aritmética de magnitud, a pesar de que el evento tipo Earthquake presenta bastantes valores atipicos.  
+
+Adicional, la categoría más frecuente por tipo de de evento y con mayor magnitud de liberacion de energía es el tipo explosión. 
+
+
 3.3 Filtre los datos de los terremotos para obtener solamente aquellos
 que se hayan dado entre las coordenadas de latitud 8 y 11 Norte con
 Longitud entre -85 y -82 Oeste. Estos son los movimiento telúricos que
