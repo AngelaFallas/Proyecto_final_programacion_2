@@ -146,7 +146,8 @@ boxplot_tipo_magnitud <- datos_terremotos |>
   labs(
     title = "Covariación entre Magnitud y Tipo"
   ) + 
-  theme(axis.title = element_text(size = 14, face = "bold"))
+  theme(axis.title = element_text(size = 14, face = "bold"))+
+  theme_classic()
 
 print(boxplot_tipo_magnitud)
 ```
@@ -160,6 +161,15 @@ Adicional, la categoría más frecuente por tipo de de evento y con mayor magnit
 que se hayan dado entre las coordenadas de latitud 8 y 11 Norte con
 Longitud entre -85 y -82 Oeste. Estos son los movimiento telúricos que
 se dieron en Costa Rica. Cuántos fueron? (3pts)
+
+
+```{r}
+terremotos_costa_rica <- datos_terremotos |> 
+  filter(Latitud >= 8, Latitud <= 11, Longitud >= -85, Longitud <= -82) |>
+  count()
+```
+
+Se dieron 65 movimientos telúricos en Costa Rica.
 
 3.4 Filtre los datos de terremotos de Costa Rica para obtener los 10
 terremotos con magnitud más altas en Costa Rica. Muestre estos datos en
